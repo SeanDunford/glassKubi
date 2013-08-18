@@ -9,9 +9,11 @@
     tools:context=".MainActivity" >
 
     <TextView
+        android:id="@+id/sensorValues_Txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="Sensor Vals Go Here" 
+        />
 
     <Button
         android:id="@+id/moveKubi_Btn"

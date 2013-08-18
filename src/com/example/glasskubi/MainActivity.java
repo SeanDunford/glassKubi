@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements SensorEventListener {
@@ -30,7 +31,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 	public String aBaseUrl = "http://stage.kubi.me/pusherphp/?"; 
 	public float x = 0.23f; 
 	public float y = 0.23f; 
-	public float sensorRange = 9.7622f; 
+	public float sensorRange = (float) (9.8 * 2); 
+	public float sensorBase = sensorRange/2; 
 	
 	public Random aRand = new Random();
 	@Override
@@ -81,14 +83,23 @@ public class MainActivity extends Activity implements SensorEventListener {
 		// TODO Auto-generated method stub
 		//The SensorRange value seems to be indeterministic and our robot 
 		//wont support values greater that 1.0 this weird code will prevent overflow
-		if (event.values[0] > sensorRange)
-			sensorRange = event.values[0]; 
-		if (event.values[1] > sensorRange)
-			sensorRange = event.values[1]; 
-		x = (float) (event.values[0] / sensorRange);
-		y = (float) (event.values[1] / sensorRange); 
-		//Toast.makeText(this, "OMG the x: "+x +"and the y:"+y, Toast.LENGTH_LONG).show(); 
-	}
+		float tempX = event.values[0]; 
+		float tempY = event.values[1]; 
+		
+		if (tempX > sensorRange){
+			sensorRange = tempX; 
+			sensorBase = sensorRange/2; 
+		}
+		if (tempY > sensorRange){
+			sensorRange = tempY; 
+			sensorBase = sensorRange/2; 
+		}
+		x = ((sensorBase + tempX)/sensorRange); 
+		y = ((sensorBase + tempY)/sensorRange); 
+	    String sensorVals = String.format("x is %f and y is %f", x,y); 
+	    TextView sensorTxt = (TextView)findViewById(R.id.sensorValues_Txt);
+	    sensorTxt.setText(sensorVals); 
+		}
 	
 
 }
@@ -122,6 +133,7 @@ class Kubi extends AsyncTask<String, Integer, Void>{
 	    } catch (IOException e) {
 	        // TODO Auto-generated catch block
 	    }
+	    
 	}
 
 	@Override
