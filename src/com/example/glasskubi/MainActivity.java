@@ -33,6 +33,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	public float y = 0.23f; 
 	public float sensorRange = (float) (9.8 * 2); 
 	public float sensorBase = sensorRange/2; 
+	public static int sensorCounter = 0; 
 	
 	public Random aRand = new Random();
 	@Override
@@ -54,11 +55,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		moveKubiBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Kubi aKubi = new Kubi();
-				Toast.makeText(getApplicationContext(), String.format("x is %f and y is %f", x, y),Toast.LENGTH_SHORT).show(); 
-				String aUrl = aBaseUrl+"x="+x+"&y="+y; 
-				aKubi.execute(aUrl); 
-				Log.d("aKubi","execute"); 
+				
 				}
          });
 	}
@@ -99,8 +96,19 @@ public class MainActivity extends Activity implements SensorEventListener {
 	    String sensorVals = String.format("x is %f and y is %f", x,y); 
 	    TextView sensorTxt = (TextView)findViewById(R.id.sensorValues_Txt);
 	    sensorTxt.setText(sensorVals); 
-		}
-	
+	    sensorCounter++; 
+	    if(sensorCounter % 100 == 0)
+	    {
+	    	updateKubi(); 
+	    }
+	    }
+	public void updateKubi(){
+		Kubi aKubi = new Kubi();
+		Toast.makeText(getApplicationContext(), String.format("x is %f and y is %f", x, y),Toast.LENGTH_SHORT).show(); 
+		String aUrl = aBaseUrl+"x="+x+"&y="+y; 
+		aKubi.execute(aUrl); 
+		Log.d("aKubi","execute"); 	
+	}
 
 }
 
