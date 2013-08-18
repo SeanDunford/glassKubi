@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 					KubiService aKubiService = new KubiService(); 
-					Intent aIntent = new Intent(); 
+					Intent aIntent = new Intent(getApplicationContext(), KubiService.class); 
 					aKubiService.startService(aIntent); 
 				}
          });
