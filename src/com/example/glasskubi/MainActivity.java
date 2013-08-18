@@ -9,6 +9,10 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
@@ -17,7 +21,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SensorEventListener {
+
+
 
 	public String aBaseUrl = "http://stage.kubi.me/pusherphp/?"; 
 	public float x = 0.23f; 
@@ -28,6 +34,11 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Button moveKubiBtn=(Button)findViewById(R.id.moveKubi_Btn);
+		
+		SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		
+		
 		moveKubiBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -50,6 +61,16 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	@Override
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onSensorChanged(SensorEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
