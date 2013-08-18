@@ -15,8 +15,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.app.Activity;
+import android.app.IntentService;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -24,46 +28,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity {
 
-
-
-	public String aBaseUrl = "http://stage.kubi.me/pusherphp/?"; 
-	public float x = 0.23f; 
-	public float y = 0.23f; 
-	public float sensorRange = (float) (9.8 * 2); 
-	public float sensorBase = sensorRange/2; 
-	public static int sensorCounter = 0; 
-	
-	public Random aRand = new Random();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-		Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-		if(sensorRange < accelerometer.getMaximumRange())
-			sensorRange = accelerometer.getMaximumRange(); 
-		
-		if(!manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)){
-
-			// handle error
-
-		}
 		Button moveKubiBtn=(Button)findViewById(R.id.moveKubi_Btn);
 		moveKubiBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				
+					KubiService aKubiService = new KubiService(); 
+					Intent aIntent = new Intent(); 
+					aKubiService.startService(aIntent); 
 				}
          });
-	}
-	public void updateCoords(){
-
-		x = aRand.nextFloat(); 
-		y = aRand.nextFloat(); 
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -71,6 +51,40 @@ public class MainActivity extends Activity implements SensorEventListener {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+
+}
+class KubiService extends Service implements SensorEventListener {
+	public String aBaseUrl = "http://stage.kubi.me/pusherphp/?"; 
+	public float x = 0.23f; 
+	public float y = 0.23f; 
+	public float sensorRange = (float) (9.8 * 2); 
+	public float sensorBase = sensorRange/2; 
+	public static int sensorCounter = 0; 
+	
+	  @Override
+	  public int onStartCommand(Intent intent, int flags, int startId) {
+	    //TODO do something useful
+			SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+			Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+			if(sensorRange < accelerometer.getMaximumRange())
+				sensorRange = accelerometer.getMaximumRange(); 
+			
+			if(!manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)){
+
+				// handle error
+
+			}
+	    return Service.START_NOT_STICKY;
+	  }
+	  
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
@@ -95,8 +109,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 		x = ((sensorBase + tempX)/sensorRange); 
 		y = ((sensorBase + tempY)/sensorRange); 
 	    String sensorVals = String.format("x is %f and y is %f", x,y); 
-	    TextView sensorTxt = (TextView)findViewById(R.id.sensorValues_Txt);
-	    sensorTxt.setText(sensorVals); 
+	  //  TextView sensorTxt = (TextView)findViewById(R.id.sensorValues_Txt);
+	  //  sensorTxt.setText(sensorVals); 
 	    sensorCounter++; 
 	    if(sensorCounter % 100 == 0)
 	    {
@@ -111,8 +125,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 		Log.d("aKubi","execute"); 	
 	}
 
+	
 }
-
 class Kubi extends AsyncTask<String, Integer, Void>{
 
     private Exception exception;
