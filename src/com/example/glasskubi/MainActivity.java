@@ -16,6 +16,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -33,12 +34,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Button moveKubiBtn=(Button)findViewById(R.id.moveKubi_Btn);
 		
 		SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		
-		
+		if(!manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)){
+
+			// handle error
+
+		}
+		Button moveKubiBtn=(Button)findViewById(R.id.moveKubi_Btn);
 		moveKubiBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -63,14 +67,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 		return true;
 	}
 	@Override
-	public void onAccuracyChanged(Sensor arg0, int arg1) {
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void onSensorChanged(SensorEvent arg0) {
+	public void onSensorChanged(SensorEvent event) {
 		// TODO Auto-generated method stub
-		
+		x = (float) event.values[0];
+		y = (float) event.values[1]; 
 	}
 	
 
