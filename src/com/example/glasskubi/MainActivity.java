@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		
 		SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
 		if(sensorRange < accelerometer.getMaximumRange())
 			sensorRange = accelerometer.getMaximumRange(); 
 		
@@ -101,7 +102,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 	    {
 	    	updateKubi(); 
 	    }
-	    }
+	}
 	public void updateKubi(){
 		Kubi aKubi = new Kubi();
 		Toast.makeText(getApplicationContext(), String.format("x is %f and y is %f", x, y),Toast.LENGTH_SHORT).show(); 
@@ -127,21 +128,15 @@ class Kubi extends AsyncTask<String, Integer, Void>{
 	    HttpPost httppost = new HttpPost(aUrl);
 
 	    try {
-	        // Add your data
-	       // List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-	       // nameValuePairs.add(new BasicNameValuePair("id", "12345"));
-	       // nameValuePairs.add(new BasicNameValuePair("stringdata", "AndDev is Cool!"));
-	       // httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-	        // Execute HTTP Post Request
 	        HttpResponse response = httpclient.execute(httppost);
 	        Log.d("Tag", response.toString()); 
-	    } catch (ClientProtocolException e) {
+	    } 
+	    catch (ClientProtocolException e) {
 	        // TODO Auto-generated catch block
-	    } catch (IOException e) {
+	    } 
+	    catch (IOException e) {
 	        // TODO Auto-generated catch block
-	    }
-	    
+	    }  
 	}
 
 	@Override
