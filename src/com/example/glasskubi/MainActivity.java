@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
@@ -29,6 +30,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 	public String aBaseUrl = "http://stage.kubi.me/pusherphp/?"; 
 	public float x = 0.23f; 
 	public float y = 0.23f; 
+	public float sensorRange = 9.7622f; 
+	
 	public Random aRand = new Random();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +40,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 		
 		SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		Sensor accelerometer = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		if(!manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME)){
+		if(sensorRange < accelerometer.getMaximumRange())
+			sensorRange = accelerometer.getMaximumRange(); 
+		
+		if(!manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)){
 
 			// handle error
 
@@ -46,9 +52,8 @@ public class MainActivity extends Activity implements SensorEventListener {
 		moveKubiBtn.setOnClickListener(new Button.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//Toast.makeText(getApplicationContext(), "ay", Toast.LENGTH_LONG).show();
 				Kubi aKubi = new Kubi();
-				updateCoords(); 
+				Toast.makeText(getApplicationContext(), String.format("x is %f and y is %f", x, y),Toast.LENGTH_SHORT).show(); 
 				String aUrl = aBaseUrl+"x="+x+"&y="+y; 
 				aKubi.execute(aUrl); 
 				Log.d("aKubi","execute"); 
@@ -74,8 +79,15 @@ public class MainActivity extends Activity implements SensorEventListener {
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		// TODO Auto-generated method stub
-		x = (float) event.values[0];
-		y = (float) event.values[1]; 
+		//The SensorRange value seems to be indeterministic and our robot 
+		//wont support values greater that 1.0 this weird code will prevent overflow
+		if (event.values[0] > sensorRange)
+			sensorRange = event.values[0]; 
+		if (event.values[1] > sensorRange)
+			sensorRange = event.values[1]; 
+		x = (float) (event.values[0] / sensorRange);
+		y = (float) (event.values[1] / sensorRange); 
+		//Toast.makeText(this, "OMG the x: "+x +"and the y:"+y, Toast.LENGTH_LONG).show(); 
 	}
 	
 
